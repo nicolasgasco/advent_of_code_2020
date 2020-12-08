@@ -81,7 +81,7 @@ def find_three_to_2020(lst):
 	# First loop to select every element
 		for i in range(len(lst)):
 		# Second loop to sum every element with every element (not itself)
-			if el != lst[i] and (el + lst[i]) < 2020:
+			if el != lst[-i] and (el + lst[i]) < 2020:
 				sum = el + lst[i]
 				for c in range(len(lst)):
 				# Third loop to sum every possible couple with every possible number
@@ -92,7 +92,20 @@ def find_three_to_2020(lst):
 
 
 solution2 = find_three_to_2020(my_input)
-print(solution2)
 
 print(f"The three numbers are: {solution2[0]}, {solution2[1]}, {solution2[2]}.")
 print(f"The solution is: {solution2[0] * solution2[1] * solution2[2]}.")
+
+# def find_two_to_2020_optimized(lst):
+# 	"""Finds two numbers in a list whose sum is 2020 and multiplies them"""
+# 	lst.sort()
+# 	results = []
+# 	for el in lst:
+# 		for i in range(len(lst)):
+# 			if el != lst[-i]:
+# 				if el + lst[-i] == 2020:
+# 					results.append(lst[-i])
+# 	return results
+
+# results = find_two_to_2020_optimized(my_input)
+# print(results)

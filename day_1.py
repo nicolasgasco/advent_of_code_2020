@@ -41,24 +41,38 @@ def list_from_file(file):
 	with open(file) as f:
 		new_list = []
 		nums = f.readlines()
+
 	for num in nums:
 		new_list.append(int(num.rstrip()))
+
 	return new_list
 
-my_input2 = [1721, 979, 366, 299, 675, 1456]
-my_input = list_from_file("day_1_input.txt")
 
 def find_two_to_2020(lst):
 	"""Finds two numbers in a list whose sum is 2020 and multiplies them"""
 	results = []
 	for el in lst:
 		for i in range(len(lst)):
+			# We don't want to sum the number by itself
 			if el != lst[i]:
 				if el + lst[i] == 2020:
 					results.append(lst[i])
+
 	return results
 
-results = find_two_to_2020(my_input)
+
+def find_two_to_2020_optimized(lst):
+	"""Finds two numbers in a list whose sum is 2020 and multiplies them, optimized"""
+	results = []
+	for el in lst:
+		difference = 2020 - el
+		if difference in lst:
+			results.append(difference)
+
+	return results
+
+my_input = list_from_file("day_1_input.txt")
+results = find_two_to_2020_optimized(my_input)
 
 print(f"The two numbers are: {results[0]} and {results[1]}.")
 print(f"The solution is: {results[0] * results [1]}.")
@@ -78,16 +92,16 @@ def find_three_to_2020(lst):
 	"""Finds three numbers in a list whose sum is 2020 and multiplies them"""
 	results = set()
 	for el in lst:
-	# First loop to select every element
 		for i in range(len(lst)):
-		# Second loop to sum every element with every element (not itself)
+		# We rule out sum of the same number and sums which are already > 2020
 			if el != lst[-i] and (el + lst[i]) < 2020:
 				sum = el + lst[i]
 				for c in range(len(lst)):
-				# Third loop to sum every possible couple with every possible number
+				# We don't sum the same numbers
 					if lst[c] != el and c != lst[i]:
 						if sum + lst[c] == 2020:
 							results.add(el)
+	
 	return list(results)
 
 
@@ -96,16 +110,3 @@ solution2 = find_three_to_2020(my_input)
 print(f"The three numbers are: {solution2[0]}, {solution2[1]}, {solution2[2]}.")
 print(f"The solution is: {solution2[0] * solution2[1] * solution2[2]}.")
 
-# def find_two_to_2020_optimized(lst):
-# 	"""Finds two numbers in a list whose sum is 2020 and multiplies them"""
-# 	lst.sort()
-# 	results = []
-# 	for el in lst:
-# 		for i in range(len(lst)):
-# 			if el != lst[-i]:
-# 				if el + lst[-i] == 2020:
-# 					results.append(lst[-i])
-# 	return results
-
-# results = find_two_to_2020_optimized(my_input)
-# print(results)

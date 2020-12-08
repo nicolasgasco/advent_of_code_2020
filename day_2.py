@@ -36,6 +36,7 @@ def _list_from_file(file):
 	with open(file) as f:
 		new_list = []
 		passwords = f.readlines()
+
 	for password in passwords:
 		new_list.append(password.rstrip())
 	return new_list
@@ -47,12 +48,14 @@ def _extract_data_from_list(lst):
 	"""Given the input as list, extract all the relevant data as single variables"""
 	for el in lst:
 		new_dict = {}
+		# Using regex groups here
 		pattern = re.compile(r"(\d+)-(\d+) (\w): (\w+)")	
 		for match in re.finditer(pattern, el):
 			new_dict["num1"] = int(match.group(1))
 			new_dict["num2"] = int(match.group(2))
 			new_dict["letter"] = match.group(3)
 			new_dict["password"] = match.group(4)
+
 			new_list.append(new_dict)
 
 	return new_list
@@ -103,6 +106,7 @@ def count_valid_second_policy(lst):
 		letter = el["letter"]
 		num1 = el["num1"]
 		num2 = el["num2"]
+		# Only one can be true at the same time, hence the two distinct case
 		if password[num1 -1] == letter and password[num2 -1] != letter:
 			total_valid += 1
 		elif password[num1 -1] != letter and password[num2 -1] == letter:

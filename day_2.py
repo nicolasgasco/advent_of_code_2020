@@ -44,8 +44,9 @@ def _list_from_file(file):
 
 
 def _extract_data_from_list(lst):
-	new_list = []
 	"""Given the input as list, extract all the relevant data as single variables"""
+	new_list = []
+
 	for el in lst:
 		new_dict = {}
 		# Using regex groups here

@@ -84,29 +84,31 @@ def _list_from_file(file):
 def count_trees(lst, line_multiplier, row_multiplier=1):
 	"""Count the number of # symbols met on the way"""
 	total_count = 0
-	for i in range(len(lst)):
-		# Multiplier for row increases bigger than 1
-		i = i * row_multiplier
+	x = 0
+	y = 0
+	# Need this a condition in order not to go out of range
+	z = len(lst)-1
+	for el in lst:
+		# Some sloped hand halfway (e.g. steps of 3 in list not dividible by 3,
+		# so this is necessary to always include the final row 
+		
+		# First everything included before the rows end
+		if y < z:
+			# In this way, step downwards bigger that 1 are correctly calculated
+			if el == lst[y]:
+				symbol = el[x]
 
-		# Starting position, multiplier won't affect it
-		if i == 0:
-			symbol = lst[0][0]
-
-		# From row 2 on, position n * multiplier
-		elif i < len(lst):
-			symbol = lst[i][i*line_multiplier]
-
-		# Last row is exception, second condition if in order not to skip it
-		elif i == (len(lst) -1) or i > (len(lst) -1):
-			symbol = lst[-1][(len(lst)*line_multiplier)-1]
-			# This must be here for the break statement to work
+				x += line_multiplier
+				y += row_multiplier
+				if symbol == "#":
+					total_count += 1
+		# And then the final row, case 1 slope ends exactly on final row,
+		# case 2, slop would end beyond the final row, but final row is counted
+		elif y >= z:
+			symbol = el[x]
 			if symbol == "#":
 				total_count += 1
-			# Necessary otherwise it can be skipped
-			break
-
-		if symbol == "#":
-			total_count += 1
+			
 	return total_count
 
 def multiply_results(result1, result2, result3, result4, result5):
@@ -114,13 +116,6 @@ def multiply_results(result1, result2, result3, result4, result5):
 	final_result = result1 * result2 * result3 * result4 * result5
 
 	return final_result
-
-file = "day_3_input.txt"
-file2 = "day_3_input - Copy.txt"
-
-lines = _list_from_file(file2)
-result1 = count_trees(lines, 3) 
-print(f"The total number of trees is {result1}.")
 
 
 """--- Part Two ---
@@ -142,6 +137,13 @@ and 2 tree(s) respectively; multiplied together, these produce the answer 336.
 What do you get if you multiply together
 the number of trees encountered on each of the listed slopes?"""
 
+file = "day_3_input.txt"
+file2 = "day_3_input - Copy.txt"
+
+lines = _list_from_file(file)
+result1 = count_trees(lines, 3) 
+print(f"The total number of trees is {result1}.")
+
 result2 = count_trees(lines, 1) 
 print(f"The total number of trees is {result2}.")
 
@@ -154,5 +156,38 @@ print(f"The total number of trees is {result4}.")
 result5 = count_trees(lines, 1, 2) 
 print(f"The total number of trees is {result5}.")
 
-final_result = multiply_results(result1, result2, result3, result4, result5)
+final_result = multiply_results(result2, result1, result3, result4, result5)
 print(f"The final result is {final_result}.")
+
+
+
+# I'm leaving this here for history, this was a complete mess
+# def count_trees(lst, line_multiplier, row_multiplier=1):
+# 	"""Count the number of # symbols met on the way"""
+# 	total_count = 0
+# 	for i in range(len(lst)):
+# 		# Multiplier for row increases bigger than 1
+# 		x = i
+# 		x *= line_multiplier
+# 		z = len(lst)-1
+# 		i *= row_multiplier
+
+# 		# From row 2 on, position n * multiplier
+# 		if i < (z):
+# 			symbol = lst[i][x]
+# 			print(symbol, "middle")
+
+# 		# Last row is exception, second condition if in order not to skip it
+# 		elif i >= z:
+# 			# It must be len(lst)-1 otherwise we're counting one row too much
+# 			symbol = lst[-1][z*line_multiplier]
+# 			# This must be here for the break statement to work
+# 			if symbol == "#":
+# 				total_count += 1
+# 			# Necessary otherwise it can be skipped
+# 			print(symbol, "end", [z*line_multiplier])
+# 			break
+			
+# 		if symbol == "#":
+# 			total_count += 1
+# 	return total_count

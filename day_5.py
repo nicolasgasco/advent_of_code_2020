@@ -50,7 +50,23 @@ BFFFBBFRRR: row 70, column 7, seat ID 567.
 FFFBBBFRRR: row 14, column 7, seat ID 119.
 BBFFBBFRLL: row 102, column 4, seat ID 820.
 As a sanity check, look through your list of boarding passes.
-What is the highest seat ID on a boarding pass?"""
+What is the highest seat ID on a boarding pass?
+
+--- Part Two ---
+Ding! The "fasten seat belt" signs have turned on. Time to find your seat.
+
+It's a completely full flight, so your seat should be the only missing
+boarding pass in your list. However, there's a catch: some of the seats
+at the very front and back of the plane don't exist on this aircraft, 
+so they'll be missing from your list as well.
+
+Your seat wasn't at the very front or back, though; the seats with IDs +1
+and -1 from yours will be in your list.
+
+What is the ID of your seat?
+"""
+
+
 def read_from_file(file):
 	"""Store content of file in a list"""
 	new_list = []
@@ -62,11 +78,13 @@ def read_from_file(file):
 
 	return new_list
 
-def find_number(array, string, X="F", Y="B"):
+
+def find_number(max, string, X, Y):
 	"""Given a range and a string of B/F, find the row where the seat it"""
+	array = range(max)
 	i = 0
 	# Keeps on until the range is halved to two elements
-	while len(array) > 2:
+	while len(array) > 1:
 		
 		if string[i] == X:
 			array = array[:int(len(array)/2)]
@@ -75,16 +93,16 @@ def find_number(array, string, X="F", Y="B"):
 		elif string[i] == Y:
 			array = array[int(len(array)/2):]
 			i += 1
-
-	# Handling final case as an exception	
+	
 	else:
-		if string[i] == X:
+		if string[i-1] == X:
 			number = array[0]
 
-		elif string[i] == Y:
-			number = array[1]
+		elif string[i-1] == Y:
+			number = array[0]
 
 	return number
+
 
 def calculate_seat(row, column):
 	"""Calculate seat when you know row and column"""
@@ -92,27 +110,34 @@ def calculate_seat(row, column):
 	return seat
 
 
-def calculate_highest_seat(lst):
-	"""Calculate highest seat ID from ticket list"""
+def list_of_seat_numbers(lst):
+	"""Return a list of tickets ID"""
 	all_tickets = []
 	for ticket in tickets_list:
-		row = find_number(rows, ticket)
-		column = find_number(seats, ticket[-3:], "L", "R")
+		row = find_number(128, ticket, "F", "B")
+		column = find_number(8, ticket[-3:], "L", "R")
 		seat = calculate_seat(row, column)
 		all_tickets.append(seat)
 
-	largest = max(all_tickets)
-	return largest
+	return all_tickets
 
 
-rows = list(range(0, 128))
-seats = list(range(0, 8))
+def find_missing_number(lst):
+	"""Find the missing number in the list"""
+	lst.sort()
+
+	for i in range(len(all_ticket_numbers)-1):
+		if all_ticket_numbers[i] != all_ticket_numbers[i+1]-1:
+			return all_ticket_numbers[i]+1
+
+
 
 file = "day_5_input.txt"
 
 tickets_list = read_from_file(file)
+all_ticket_numbers = list_of_seat_numbers(tickets_list)
+missing_seat = find_missing_number(all_ticket_numbers)
 
-largest_ID = calculate_highest_seat(tickets_list)
-print(f"The highest seat ID in the list is {largest_ID}.")
 
-
+print(f"The highest seat ID in the list is {max(all_ticket_numbers)}.")
+print(f"My seat ID is {missing_seat}.")

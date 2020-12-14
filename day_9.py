@@ -169,6 +169,7 @@ for num in lines:
 		# The result we want
 		if sum(nums_list) == result:
 			partial_result = nums_list
+			print(partial_result)
 
 # Sum smallest and biggest to finish exercise
 final_result = min(partial_result) + max(partial_result)

@@ -46,6 +46,48 @@ absolute values of its east/west position and its north/south position) from its
 starting position is 17 + 8 = 25.
 
 Figure out where the navigation instructions lead. What is the Manhattan
+distance between that location and the ship's starting position?
+
+--- Part Two ---
+Before you can give the destination to the captain, you realize that the actual
+action meanings were printed on the back of the instructions the whole time.
+
+Almost all of the actions indicate how to move a waypoint which is relative to
+the ship's position:
+
+Action N means to move the waypoint north by the given value.
+Action S means to move the waypoint south by the given value.
+Action E means to move the waypoint east by the given value.
+Action W means to move the waypoint west by the given value.
+Action L means to rotate the waypoint around the ship left (counter-clockwise)
+the given number of degrees.
+Action R means to rotate the waypoint around the ship right (clockwise) the given
+number of degrees.
+Action F means to move forward to the waypoint a number of times equal to the
+given value.
+The waypoint starts 10 units east and 1 unit north relative to the ship. The
+waypoint is relative to the ship; that is, if the ship moves, the waypoint moves
+with it.
+
+For example, using the same instructions as above:
+
+F10 moves the ship to the waypoint 10 times (a total of 100 units east and 10
+units north), leaving the ship at east 100, north 10. The waypoint stays 10
+units east and 1 unit north of the ship.
+N3 moves the waypoint 3 units north to 10 units east and 4 units north of the
+ship. The ship remains at east 100, north 10.
+F7 moves the ship to the waypoint 7 times (a total of 70 units east and 28
+units north), leaving the ship at east 170, north 38. The waypoint stays 10
+units east and 4 units north of the ship.
+R90 rotates the waypoint around the ship clockwise 90 degrees, moving it to 4
+units east and 10 units south of the ship. The ship remains at east 170, north 38.
+F11 moves the ship to the waypoint 11 times (a total of 44 units east and 110
+units south), leaving the ship at east 214, south 72. The waypoint stays 4 units
+east and 10 units south of the ship.
+After these operations, the ship's Manhattan distance from its starting position
+is 214 + 72 = 286.
+
+Figure out where the navigation instructions actually lead. What is the Manhattan
 distance between that location and the ship's starting position?"""
 
 file = "day_12.txt"
@@ -93,9 +135,102 @@ for line in data:
 		direction = current_position["current_direction"]
 		current_position[direction] += value
 
+ 
 abs_north_south = abs(current_position['north'] - current_position['south'])
 abs_east_west = abs(current_position['west'] - current_position['east'])
 
-print(current_position["current_direction"])
-
 print(f"The result of the first part is: {abs_north_south + abs_east_west}.")
+
+
+# Part 2
+
+directions = ["north", "east", "south", "west"]
+ship = {"north": 0, "east": 0, "south": 0, "west": 0}
+
+# Waypoint initialized with other coordinates
+waypoint = {"north": ship["north"]+1, "east": ship["east"]+10, "south": ship["south"], "west": ship["west"]}
+
+
+
+# Iterate all instructions
+for line in data:
+	letter = line[0]
+	value = int(line[1:])
+	turns = int(value / 90)
+	
+
+	if letter == "N":
+		waypoint["north"] += value
+
+	elif letter == "S":
+		waypoint["south"] += value
+
+	elif letter == "E":
+		waypoint["east"] += value
+
+	elif letter == "W":
+		waypoint["west"] += value
+
+	elif letter == "R":
+		# Copy necessary, otherwise you change one value and the next one reads
+		# the new one and not the old one as it should be
+		waypoint_copy = waypoint.copy()
+
+		# Turning right is switching left all directions
+		for direction in directions:
+			waypoint[direction] = waypoint_copy[directions[(directions.index(direction) - turns)]]
+
+
+	elif letter == "L":
+		waypoint_copy = waypoint.copy()
+
+
+		for direction in directions:
+			# List can go out of range, therefore %
+			waypoint[direction] = waypoint_copy[directions[(directions.index(direction) + turns) % len(directions)]]
+
+	# Relative to waypoint
+	elif letter == "F":
+
+		# We're going north
+		if waypoint["north"] != 0:
+
+			# Current south value is bigger than movement
+			if ship["south"] - (value * waypoint["north"]) >= 0:
+				ship["north"] = 0
+				ship["south"] = ship["south"] - (value * waypoint["north"])
+
+			# Current south value is smaller than movement
+			else:
+				ship["north"] += abs(ship["south"] - (value * waypoint["north"]))
+				ship["south"] = 0
+
+		if waypoint["south"] != 0:
+			if ship["north"] - (value * waypoint["south"]) >= 0:
+				ship["south"] = 0
+				ship["north"] = ship["north"] - (value * waypoint["south"])
+			else:
+				ship["south"] += abs(ship["north"] - (value * waypoint["south"]))
+				ship["north"] = 0 
+
+		if waypoint["west"] != 0:
+			if ship["east"] - (value * waypoint["west"]) >= 0:
+				ship["west"] = 0
+				ship["east"] = ship["east"] - (value * waypoint["west"])
+			else:
+				ship["west"] += abs(ship["east"] - (value * waypoint["west"]))
+				ship["east"] = 0 
+
+		if waypoint["east"] != 0:
+			if ship["west"] - (value * waypoint["east"]) >= 0:
+				ship["east"] = 0
+				ship["west"] = ship["west"] - (value * waypoint["east"])
+			else:
+				ship["east"] += abs(ship["west"] - (value * waypoint["east"]))
+				ship["west"] = 0 	
+
+
+abs_east_west = abs(ship["west"] - ship["east"])
+abs_north_south = abs(ship["north"] - ship["south"])
+
+print(f"The result of the second part is {abs_east_west + abs_north_south}.")

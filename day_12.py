@@ -90,7 +90,7 @@ is 214 + 72 = 286.
 Figure out where the navigation instructions actually lead. What is the Manhattan
 distance between that location and the ship's starting position?"""
 
-file = "day_12.txt"
+file = "day_12_input.txt"
 with open(file) as f:
 	lines = f.readlines()
 
